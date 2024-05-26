@@ -6,17 +6,16 @@
     <title>LINE風チャットアプリ</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body onload="initChat()">
     <div class="chat-container">
         <div class="sidebar">
             <div class="chat-list">
-                <div class="chat-item" onclick="openChat('character1')">キャラ1</div>
-                <div class="chat-item" onclick="openChat('character2')">キャラ2</div>
-                <!-- 他のキャラクターも追加可能 -->
+                <div class="chat-item" onclick="openChat('andrew')">アンドリュー</div>
+                <!-- キャラクターリストはJavaScriptで動的に生成します -->
             </div>
         </div>
         <div class="chat-window">
-            <div class="chat-header" id="chat-header">キャラ名</div>
+            <div class="chat-header" id="chat-header">アンドリュー</div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input">
                 <input type="text" id="user-input" placeholder="メッセージを入力">

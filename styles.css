@@ -33,9 +33,17 @@ body {
 }
 
 .chat-item {
+    display: flex;
+    align-items: center;
     padding: 20px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
+}
+
+.chat-item img {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
 }
 
 .chat-item:hover {
@@ -99,14 +107,13 @@ body {
 }
 
 .chat-input button {
-    padding: 10px 20px;
+    background: none;
     border: none;
-    background-color: #075e54;
-    color: white;
-    border-radius: 4px;
+    padding: 0;
     cursor: pointer;
 }
 
-.chat-input button:hover {
-    background-color: #064d43;
+.chat-input button img {
+    width: 24px;
+    height: 24px;
 }
