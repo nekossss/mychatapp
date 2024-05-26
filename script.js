@@ -22,6 +22,7 @@ let activeCharacter = '';
 function initChat() {
     // 最初はメッセージを表示しない
     document.getElementById('chat-messages').innerHTML = '';
+    document.getElementById('chat-header').innerText = "メッセージを見る人の名前を選択してください";
 }
 
 function openChat(character) {
@@ -50,6 +51,9 @@ function openChat(character) {
 
 function sendMessage() {
     const userInput = document.getElementById("user-input");
+    if (userInput.value.trim() === '') {
+        return; // 空のメッセージを送信しない
+    }
     const chatMessages = document.getElementById("chat-messages");
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", "user");
@@ -71,4 +75,13 @@ function sendMessage() {
 
     userInput.value = '';
     chatMessages.scrollTop = chatMessages.scrollHeight; // 自動スクロール
+
+    // 送信ボタンを無効にする
+    document.getElementById('send-button').disabled = true;
+}
+
+function toggleSendButton() {
+    const userInput = document.getElementById("user-input");
+    const sendButton = document.getElementById("send-button");
+    sendButton.disabled = userInput.value.trim() === '';
 }

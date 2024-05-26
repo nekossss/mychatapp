@@ -18,11 +18,11 @@
             </div>
         </div>
         <div class="chat-window">
-            <div class="chat-header" id="chat-header">キャラ名</div>
+            <div class="chat-header" id="chat-header">メッセージを見る人の名前を選択してください</div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input">
-                <input type="text" id="user-input" placeholder="メッセージを入力">
-                <button onclick="sendMessage()">送信</button>
+                <input type="text" id="user-input" placeholder="メッセージを入力" oninput="toggleSendButton()">
+                <button id="send-button" onclick="sendMessage()" disabled>送信</button>
             </div>
         </div>
     </div>
