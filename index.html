@@ -10,12 +10,15 @@
     <div class="chat-container">
         <div class="sidebar">
             <div class="chat-list">
-                <div class="chat-item" onclick="openChat('andrew')">アンドリュー</div>
-                <!-- キャラクターリストはJavaScriptで動的に生成します -->
+                <div class="chat-item" onclick="openChat('andrew')">
+                    アンドリュー
+                    <span id="andrew-unread" class="unread-count">未読4</span>
+                </div>
+                <!-- 他のキャラクターも追加可能 -->
             </div>
         </div>
         <div class="chat-window">
-            <div class="chat-header" id="chat-header">アンドリュー</div>
+            <div class="chat-header" id="chat-header">キャラ名</div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input">
                 <input type="text" id="user-input" placeholder="メッセージを入力">
