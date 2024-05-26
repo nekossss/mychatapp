@@ -9,8 +9,18 @@ const messages = {
     ]
 };
 
+const correctWords = {
+    character1: "正解ワード",
+    character2: "別の正解ワード"
+};
+
+let activeCharacter = 'character1';
+
 function openChat(character) {
+    activeCharacter = character;
     const chatMessages = document.getElementById("chat-messages");
+    const chatHeader = document.getElementById("chat-header");
+    chatHeader.innerText = character;
     chatMessages.innerHTML = '';
     messages[character].forEach(message => {
         const messageElement = document.createElement("div");
@@ -27,5 +37,21 @@ function sendMessage() {
     messageElement.classList.add("message", "user");
     messageElement.innerText = userInput.value;
     chatMessages.appendChild(messageElement);
+
+    if (userInput.value.includes(correctWords[activeCharacter])) {
+        const nextMessage = { text: "次のトークが始まります！", from: "character" };
+        messages[activeCharacter].push(nextMessage);
+        const responseElement = document.createElement("div");
+        responseElement.classList.add("message", "character");
+        responseElement.innerText = nextMessage.text;
+        chatMessages.appendChild(responseElement);
+    } else {
+        const responseElement = document.createElement("div");
+        responseElement.classList.add("message", "character");
+        responseElement.innerText = "違うと思うが";
+        chatMessages.appendChild(responseElement);
+    }
+
     userInput.value = '';
+    chatMessages.scrollTop = chatMessages.scrollHeight; // 自動スクロール
 }

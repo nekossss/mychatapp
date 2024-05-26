@@ -6,14 +6,16 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f0f0f0;
 }
 
 .chat-container {
     display: flex;
-    width: 800px;
+    width: 900px;
     height: 600px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .sidebar {
@@ -26,41 +28,65 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .chat-item {
-    padding: 15px;
+    padding: 20px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
 }
 
 .chat-item:hover {
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
 }
 
 .chat-window {
     width: 70%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    background-color: #fff;
+    background-color: #e5ddd5;
 }
 
 .chat-header {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-    background-color: #f9f9f9;
+    padding: 20px;
+    background-color: #075e54;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .chat-messages {
     flex: 1;
-    padding: 15px;
-    overflow-y: scroll;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #ffffff;
+}
+
+.message {
+    margin-bottom: 15px;
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    clear: both;
+}
+
+.message.character {
+    background-color: #dcf8c6;
+    float: left;
+}
+
+.message.user {
+    background-color: #34b7f1;
+    color: white;
+    float: right;
 }
 
 .chat-input {
     display: flex;
-    padding: 15px;
+    padding: 10px;
+    background-color: #f0f0f0;
     border-top: 1px solid #ddd;
 }
 
@@ -75,12 +101,12 @@ body {
 .chat-input button {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: #fff;
+    background-color: #075e54;
+    color: white;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .chat-input button:hover {
-    background-color: #0056b3;
+    background-color: #064d43;
 }
