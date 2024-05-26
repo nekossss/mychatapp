@@ -30,9 +30,12 @@ function openChat(character) {
     const chatHeader = document.getElementById("chat-header");
     chatHeader.innerText = characters[character].name;
     chatMessages.innerHTML = '';
-    
+
     // 未読メッセージアイコンを非表示にする
-    document.getElementById(`${character}-unread`).style.display = 'none';
+    const unreadElement = document.getElementById(`${character}-unread`);
+    if (unreadElement) {
+        unreadElement.style.display = 'none';
+    }
 
     characters[character].messages.forEach(message => {
         const messageElement = document.createElement("div");
@@ -40,6 +43,9 @@ function openChat(character) {
         messageElement.innerText = message.text;
         chatMessages.appendChild(messageElement);
     });
+
+    // 未読メッセージを既読に変更
+    characters[character].unread = 0;
 }
 
 function sendMessage() {
