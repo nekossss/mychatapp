@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE風チャットアプリ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="chat-list">
+                <div class="chat-item" onclick="openChat('character1')">キャラ1</div>
+                <div class="chat-item" onclick="openChat('character2')">キャラ2</div>
+                <!-- 他のキャラクターも追加可能 -->
+            </div>
+        </div>
+        <div class="chat-window">
+            <div class="chat-header">キャラ名</div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="メッセージを入力">
+                <button onclick="sendMessage()">送信</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
