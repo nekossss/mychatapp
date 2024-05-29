@@ -40,7 +40,11 @@ function fetchData() {
                     wrongWords: [wrongWord1, wrongWord2].filter(word => word !== null),
                     wrongResponse: wrongResponse
                 });
-                characters[character].unread++;
+
+                // 未読メッセージのカウントロジック
+                if (!correctWord && !wrongWord1 && !wrongWord2 && !wrongResponse) {
+                    characters[character].unread++;
+                }
             });
             console.log("Parsed characters:", characters); // デバッグ用のログ
             updateCharacterList();
