@@ -1,6 +1,6 @@
-const apiKey = 'YOUR_GOOGLE_SHEETS_API_KEY'; // 取得したAPIキーをここに入力
-const spreadsheetId = 'YOUR_SPREADSHEET_ID'; // 取得したスプレッドシートIDをここに入力
-const range = 'シート1!A2:G'; // データがある範囲を指定
+const apiKey = 'AIzaSyAvcuZHQcZwKZOr3h0zwJ808R-5LOYCPKY'; // 取得したAPIキーをここに入力
+const spreadsheetId = '1eXSLaACf0XBKScv5fcLJZdMb_5yUsw-k9fdO5jGxZAA'; // 取得したスプレッドシートIDをここに入力
+const range = 'シナリオ本番!A2:G'; // データがある範囲を指定
 
 const characters = {};
 let activeCharacter = '';
