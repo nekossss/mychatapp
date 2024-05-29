@@ -8,9 +8,16 @@ let currentMessageIndex = {};
 
 function fetchData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
-        .then(response => response.json())
+        .then(response => {
+            console.log("Fetch response:", response); // デバッグ用のログ
+            return response.json();
+        })
         .then(data => {
             console.log("Fetched data:", data); // デバッグ用のログ
+            if (!data.values) {
+                console.error("No data found");
+                return;
+            }
             const rows = data.values;
             rows.forEach(row => {
                 const character = row[0];
