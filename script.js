@@ -1,6 +1,6 @@
 const apiKey = 'AIzaSyAvcuZHQcZwKZOr3h0zwJ808R-5LOYCPKY'; // 取得したAPIキーをここに入力
 const spreadsheetId = '1eXSLaACf0XBKScv5fcLJZdMb_5yUsw-k9fdO5jGxZAA'; // 取得したスプレッドシートIDをここに入力
-const range = 'シナリオ本番!A2:G'; // データがある範囲を指定
+const range = 'シート1!A2:G'; // データがある範囲を指定
 
 const characters = {};
 let activeCharacter = '';
@@ -10,6 +10,7 @@ function fetchData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data); // デバッグ用のログ
             const rows = data.values;
             rows.forEach(row => {
                 const character = row[0];
@@ -36,6 +37,7 @@ function fetchData() {
                     wrongResponse: wrongResponse
                 });
             });
+            console.log(characters); // デバッグ用のログ
             updateCharacterList();
         })
         .catch(error => console.error('Error fetching data:', error));
