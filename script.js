@@ -1,29 +1,68 @@
-const characters = {
-    andrew: {
-        name: "アンドリュー",
-        messages: [
-            { text: "どうも。噂の“探偵さん”だな", from: "character" },
-            { text: "俺は初めましてだが、警察組織でもあんたの話は有名なんだ。聞くところによれば、幾つかの難事件解決にもあんたが噛んでるそうじゃないか", from: "character" },
-            { text: "もっとも“あんた”が、個人なのか複数人のグループなのか、それは俺は知らんが、便宜上そう呼ばせて貰う", from: "character" },
-            { text: "今回は、公式の依頼という訳にはいかないが、とにかく協力に感謝するよ。まぁ本職としては情けない話だがな", from: "character" },
-            { text: "早速だが、事件資料をまとめておいた。１と書かれた封筒を開けてくれ", from: "character" }
-        ],
-        unread: 5 // 未読メッセージ数を追加
-    },
-    // 他のキャラクターをここに追加
-};
+const apiKey = 'YOUR_GOOGLE_SHEETS_API_KEY'; // 取得したAPIキーをここに入力
+const spreadsheetId = 'YOUR_SPREADSHEET_ID'; // 取得したスプレッドシートIDをここに入力
+const range = 'シート1!A2:G'; // データがある範囲を指定
 
-const correctWords = {
-    andrew: ["正解ワード1", "正解ワード2"], // 正解ワードを追加
-    // 他のキャラクターの正解ワードをここに追加
-};
-
+const characters = {};
 let activeCharacter = '';
+let messageQueue = [];
+
+function fetchData() {
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            const rows = data.values;
+            rows.forEach(row => {
+                const character = row[0];
+                const message = row[1];
+                const sender = row[2];
+                const correctWord = row[3] !== 'なし' ? row[3] : null;
+                const wrongWord1 = row[4] !== 'なし' ? row[4] : null;
+                const wrongWord2 = row[5] !== 'なし' ? row[5] : null;
+                const wrongResponse = row[6] !== 'なし' ? row[6] : null;
+
+                if (!characters[character]) {
+                    characters[character] = {
+                        name: character,
+                        messages: [],
+                        unread: 0
+                    };
+                }
+
+                characters[character].messages.push({
+                    text: message,
+                    from: sender,
+                    correctWord: correctWord,
+                    wrongWords: [wrongWord1, wrongWord2].filter(word => word !== null),
+                    wrongResponse: wrongResponse
+                });
+            });
+            updateCharacterList();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
 
 function initChat() {
-    // 最初はメッセージを表示しない
     document.getElementById('chat-messages').innerHTML = '';
-    document.getElementById('chat-header').innerText = "メッセージを見る人の名前を選択してください";
+    document.getElementById('chat-header').innerText = "トークするキャラを選択してください";
+    document.getElementById('user-input').disabled = true;
+    document.getElementById('send-button').disabled = true;
+}
+
+function updateCharacterList() {
+    const chatList = document.getElementById('chat-list');
+    chatList.innerHTML = '';
+    Object.keys(characters).forEach(character => {
+        const characterItem = document.createElement('div');
+        characterItem.classList.add('chat-item');
+        characterItem.onclick = () => openChat(character);
+        characterItem.innerHTML = `
+            ${characters[character].name}
+            ${characters[character].unread > 0 ? `<span id="${character}-unread" class="unread-count">未読${characters[character].unread}</span>` : ''}
+        `;
+        chatList.appendChild(characterItem);
+    });
 }
 
 function openChat(character) {
@@ -33,52 +72,77 @@ function openChat(character) {
     chatHeader.innerText = characters[character].name;
     chatMessages.innerHTML = '';
 
-    // 未読メッセージアイコンを非表示にする
     const unreadElement = document.getElementById(`${character}-unread`);
     if (unreadElement) {
         unreadElement.style.display = 'none';
     }
 
+    characters[character].unread = 0;
     characters[character].messages.forEach(message => {
         const messageElement = document.createElement("div");
-        messageElement.classList.add("message", message.from);
+        messageElement.classList.add("message", message.from === character ? 'character' : 'user');
         messageElement.innerText = message.text;
         chatMessages.appendChild(messageElement);
     });
 
-    // 未読メッセージを既読に変更
-    characters[character].unread = 0;
+    document.getElementById('user-input').disabled = false;
+    document.getElementById('send-button').disabled = true;
+    updateMessageOptions();
+}
+
+function updateMessageOptions() {
+    const userInput = document.getElementById('user-input');
+    userInput.innerHTML = '<option value="">メッセージを選択</option>';
+    characters[activeCharacter].messages.forEach((message, index) => {
+        if (message.from !== activeCharacter && !message.correctWord) {
+            const option = document.createElement('option');
+            option.value = index;
+            option.innerText = message.text;
+            userInput.appendChild(option);
+        }
+    });
 }
 
 function sendMessage() {
     const userInput = document.getElementById("user-input");
     if (userInput.value.trim() === '') {
-        return; // 空のメッセージを送信しない
+        return;
     }
     const chatMessages = document.getElementById("chat-messages");
+    const messageIndex = userInput.value;
+    const message = characters[activeCharacter].messages[messageIndex];
+
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", "user");
-    messageElement.innerText = userInput.value;
+    messageElement.innerText = message.text;
     chatMessages.appendChild(messageElement);
 
-    const correctResponse = correctWords[activeCharacter] && correctWords[activeCharacter].includes(userInput.value);
     setTimeout(() => {
         const responseElement = document.createElement("div");
         responseElement.classList.add("message", "character");
-        if (correctResponse) {
-            responseElement.innerText = "なるほど、その考えはなかった";
+
+        if (message.correctWord) {
+            responseElement.innerText = message.correctWord;
+            characters[activeCharacter].messages[messageIndex].correctWord = null;
+            const nextMessage = characters[activeCharacter].messages[messageIndex + 1];
+            if (nextMessage) {
+                characters[nextMessage.from].unread++;
+                updateCharacterList();
+                openChat(nextMessage.from);
+            }
+        } else if (message.wrongWords.includes(userInput.value)) {
+            responseElement.innerText = message.wrongResponse;
         } else {
             responseElement.innerText = "違うと思うが";
         }
+
         chatMessages.appendChild(responseElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight; // 自動スクロール
-    }, 1000); // 1秒後に応答
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 1000);
 
     userInput.value = '';
-    chatMessages.scrollTop = chatMessages.scrollHeight; // 自動スクロール
-
-    // 送信ボタンを無効にする
-    document.getElementById('send-button').disabled = true;
+    toggleSendButton();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function toggleSendButton() {

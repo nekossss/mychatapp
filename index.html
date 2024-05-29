@@ -9,24 +9,22 @@
 <body onload="initChat()">
     <div class="chat-container">
         <div class="sidebar">
-            <div class="chat-list">
-                <div class="chat-item" onclick="openChat('andrew')">
-                    アンドリュー
-                    <span id="andrew-unread" class="unread-count">5</span>
-                </div>
-                <!-- 他のキャラクターも追加可能 -->
+            <div class="chat-list" id="chat-list">
+                <!-- キャラクターリストはJavaScriptで動的に生成します -->
             </div>
         </div>
         <div class="chat-window">
-            <div class="chat-header" id="chat-header">メッセージを見る人の名前を選択してください</div>
+            <div class="chat-header" id="chat-header">トークするキャラを選択してください</div>
             <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input">
-                <input type="text" id="user-input" placeholder="メッセージを入力" oninput="toggleSendButton()">
+            <div class="chat-input" id="chat-input-container">
+                <select id="user-input" onchange="toggleSendButton()">
+                    <option value="">メッセージを選択</option>
+                    <!-- オプションはJavaScriptで動的に生成します -->
+                </select>
                 <button id="send-button" onclick="sendMessage()" disabled>送信</button>
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
