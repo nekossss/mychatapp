@@ -6,20 +6,19 @@
     <title>LINE風チャットアプリ</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body onload="initChat()">
+<body>
     <div class="chat-container">
         <div class="sidebar">
-            <div class="chat-list" id="chat-list">
-                <!-- キャラクターリストはJavaScriptで動的に生成します -->
+            <div id="chat-list" class="chat-list">
+                <!-- キャラクターリストはJavaScriptで動的に生成 -->
             </div>
         </div>
         <div class="chat-window">
-            <div class="chat-header" id="chat-header">トークするキャラを選択してください</div>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input" id="chat-input-container">
+            <div id="chat-header" class="chat-header">トークするキャラを選択してください</div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input">
                 <select id="user-input" onchange="toggleSendButton()">
                     <option value="">メッセージを選択</option>
-                    <!-- オプションはJavaScriptで動的に生成します -->
                 </select>
                 <button id="send-button" onclick="sendMessage()" disabled>送信</button>
             </div>
