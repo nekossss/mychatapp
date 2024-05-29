@@ -4,7 +4,7 @@ const range = 'シート1!A2:G'; // データがある範囲を指定
 
 const characters = {};
 let activeCharacter = '';
-let messageQueue = [];
+let currentMessageIndex = {};
 
 function fetchData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
@@ -69,6 +69,7 @@ function updateCharacterList() {
 
 function openChat(character) {
     activeCharacter = character;
+    currentMessageIndex[character] = 0;
     const chatMessages = document.getElementById("chat-messages");
     const chatHeader = document.getElementById("chat-header");
     chatHeader.innerText = characters[character].name;
@@ -81,10 +82,12 @@ function openChat(character) {
 
     characters[character].unread = 0;
     characters[character].messages.forEach(message => {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message", message.from === character ? 'character' : 'user');
-        messageElement.innerText = message.text;
-        chatMessages.appendChild(messageElement);
+        if (message.from === character) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message", "character");
+            messageElement.innerText = message.text;
+            chatMessages.appendChild(messageElement);
+        }
     });
 
     document.getElementById('user-input').disabled = false;
@@ -95,14 +98,21 @@ function openChat(character) {
 function updateMessageOptions() {
     const userInput = document.getElementById('user-input');
     userInput.innerHTML = '<option value="">メッセージを選択</option>';
-    characters[activeCharacter].messages.forEach((message, index) => {
-        if (message.from !== activeCharacter && !message.correctWord) {
+    const currentMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
+    if (currentMessage) {
+        currentMessage.wrongWords.forEach((word, index) => {
             const option = document.createElement('option');
-            option.value = index;
-            option.innerText = message.text;
+            option.value = word;
+            option.innerText = word;
+            userInput.appendChild(option);
+        });
+        if (currentMessage.correctWord) {
+            const option = document.createElement('option');
+            option.value = currentMessage.correctWord;
+            option.innerText = currentMessage.correctWord;
             userInput.appendChild(option);
         }
-    });
+    }
 }
 
 function sendMessage() {
@@ -111,29 +121,30 @@ function sendMessage() {
         return;
     }
     const chatMessages = document.getElementById("chat-messages");
-    const messageIndex = userInput.value;
-    const message = characters[activeCharacter].messages[messageIndex];
+    const messageText = userInput.value;
 
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", "user");
-    messageElement.innerText = message.text;
+    messageElement.innerText = messageText;
     chatMessages.appendChild(messageElement);
+
+    const currentMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
 
     setTimeout(() => {
         const responseElement = document.createElement("div");
         responseElement.classList.add("message", "character");
 
-        if (message.correctWord) {
-            responseElement.innerText = message.correctWord;
-            characters[activeCharacter].messages[messageIndex].correctWord = null;
-            const nextMessage = characters[activeCharacter].messages[messageIndex + 1];
+        if (messageText === currentMessage.correctWord) {
+            responseElement.innerText = currentMessage.text;
+            currentMessageIndex[activeCharacter]++;
+            const nextMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
             if (nextMessage) {
                 characters[nextMessage.from].unread++;
                 updateCharacterList();
                 openChat(nextMessage.from);
             }
-        } else if (message.wrongWords.includes(userInput.value)) {
-            responseElement.innerText = message.wrongResponse;
+        } else if (currentMessage.wrongWords.includes(messageText)) {
+            responseElement.innerText = currentMessage.wrongResponse;
         } else {
             responseElement.innerText = "違うと思うが";
         }
