@@ -116,6 +116,7 @@ function updateMessageOptions() {
             userInput.appendChild(option);
         }
     }
+    console.log("User Input Options:", userInput.innerHTML); // デバッグ用のログ
 }
 
 function sendMessage() {
@@ -149,7 +150,7 @@ function sendMessage() {
         } else if (currentMessage.wrongWords.includes(messageText)) {
             responseElement.innerText = currentMessage.wrongResponse;
         } else {
-            responseElement.innerText = "違うと思うが";
+            responseElement.innerText = currentMessage.wrongResponse || "違うと思うが";
         }
 
         chatMessages.appendChild(responseElement);
