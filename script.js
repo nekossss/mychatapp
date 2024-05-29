@@ -8,10 +8,7 @@ let currentMessageIndex = {};
 
 function fetchData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
-        .then(response => {
-            console.log("Fetch response:", response); // デバッグ用のログ
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             console.log("Fetched data:", data); // デバッグ用のログ
             if (!data.values) {
@@ -43,6 +40,7 @@ function fetchData() {
                     wrongWords: [wrongWord1, wrongWord2].filter(word => word !== null),
                     wrongResponse: wrongResponse
                 });
+                characters[character].unread++;
             });
             console.log("Parsed characters:", characters); // デバッグ用のログ
             updateCharacterList();
@@ -91,18 +89,32 @@ function openChat(character) {
     }
 
     characters[character].unread = 0;
-    characters[character].messages.forEach(message => {
-        if (message.from === character) {
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message", "character");
-            messageElement.innerText = message.text;
-            chatMessages.appendChild(messageElement);
-        }
-    });
 
+    displayNextMessage();
     document.getElementById('user-input').disabled = false;
     document.getElementById('send-button').disabled = true;
-    updateMessageOptions();
+}
+
+function displayNextMessage() {
+    const chatMessages = document.getElementById("chat-messages");
+    const currentMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
+
+    if (!currentMessage) return;
+
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message", "character");
+    messageElement.innerText = currentMessage.text;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // 自動スクロール
+
+    if (!currentMessage.correctWord && !currentMessage.wrongWords.length) {
+        // 正解ワードも間違いワードもない場合は次のメッセージを自動で表示
+        currentMessageIndex[activeCharacter]++;
+        displayNextMessage();
+    } else {
+        // 正解ワードや間違いワードがある場合はユーザーの入力を待つ
+        updateMessageOptions();
+    }
 }
 
 function updateMessageOptions() {
@@ -149,14 +161,8 @@ function sendMessage() {
         responseElement.classList.add("message", "character");
 
         if (messageText === currentMessage.correctWord) {
-            responseElement.innerText = currentMessage.text;
             currentMessageIndex[activeCharacter]++;
-            const nextMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
-            if (nextMessage) {
-                characters[nextMessage.from].unread++;
-                updateCharacterList();
-                openChat(nextMessage.from);
-            }
+            displayNextMessage();
         } else if (currentMessage.wrongWords.includes(messageText)) {
             responseElement.innerText = currentMessage.wrongResponse;
         } else {
