@@ -100,13 +100,16 @@ function updateMessageOptions() {
     userInput.innerHTML = '<option value="">メッセージを選択</option>';
     const currentMessage = characters[activeCharacter].messages[currentMessageIndex[activeCharacter]];
     if (currentMessage) {
+        console.log("Current Message:", currentMessage); // デバッグ用のログ
         currentMessage.wrongWords.forEach((word, index) => {
+            console.log("Adding wrong word option:", word); // デバッグ用のログ
             const option = document.createElement('option');
             option.value = word;
             option.innerText = word;
             userInput.appendChild(option);
         });
         if (currentMessage.correctWord) {
+            console.log("Adding correct word option:", currentMessage.correctWord); // デバッグ用のログ
             const option = document.createElement('option');
             option.value = currentMessage.correctWord;
             option.innerText = currentMessage.correctWord;
