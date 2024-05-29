@@ -10,7 +10,7 @@ function fetchData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data); // デバッグ用のログ
+            console.log("Fetched data:", data); // デバッグ用のログ
             const rows = data.values;
             rows.forEach(row => {
                 const character = row[0];
@@ -37,7 +37,7 @@ function fetchData() {
                     wrongResponse: wrongResponse
                 });
             });
-            console.log(characters); // デバッグ用のログ
+            console.log("Parsed characters:", characters); // デバッグ用のログ
             updateCharacterList();
         })
         .catch(error => console.error('Error fetching data:', error));
@@ -53,6 +53,7 @@ function initChat() {
 }
 
 function updateCharacterList() {
+    console.log("Updating character list"); // デバッグ用のログ
     const chatList = document.getElementById('chat-list');
     chatList.innerHTML = '';
     Object.keys(characters).forEach(character => {
@@ -64,10 +65,12 @@ function updateCharacterList() {
             ${characters[character].unread > 0 ? `<span id="${character}-unread" class="unread-count">未読${characters[character].unread}</span>` : ''}
         `;
         chatList.appendChild(characterItem);
+        console.log("Added character to list:", character); // デバッグ用のログ
     });
 }
 
 function openChat(character) {
+    console.log("Opening chat for character:", character); // デバッグ用のログ
     activeCharacter = character;
     currentMessageIndex[character] = 0;
     const chatMessages = document.getElementById("chat-messages");
